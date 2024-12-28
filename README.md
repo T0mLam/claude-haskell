@@ -5,6 +5,7 @@ This library provides Haskell functions to interact with Claude's API, including
 ## Table of Contents
 
 - [Installation](#installation)
+- [Usage](#usage)
 - [Modules](#modules)
   - [**ClaudeAPI.Config**](#claudeapiconfig)
     - [baseUrl](#baseurl)
@@ -446,6 +447,8 @@ data ImageSource = ImageSource
 let imgSource = ImageSource { encodingType = "base64", mediaType = "image/jpeg", imageData = "<base64-encoded-data>" }
 ```
 
+</br>
+
 #### `RequestMessageContent`
 Represents the content of a message, which can either be an image or text.
 
@@ -462,6 +465,8 @@ let imgMsg = ImageContent { msgType = "image", source = imgSource }
 let textMsg = TextContent { msgType = "text", text = "Hello" }
 ```
 
+</br>
+
 #### `RequestMessage`
 Represents a message sent by a user, containing a role (e.g., "user") and content (either a string or list of `RequestMessageContent`).
 
@@ -477,6 +482,8 @@ data RequestMessage = RequestMessage
 ```haskell
 let reqMsg = RequestMessage { role = "user", content = Left "Hello" }
 ```
+
+</br>
 
 #### `ChatRequest`
 Represents a request to the Claude API to initiate or continue a chat. Includes model selection, messages, and various optional parameters.
@@ -507,6 +514,8 @@ let chatReq = ChatRequest
     }
 ```
 
+</br>
+
 #### `ResponseMessage`
 Represents a response message from Claude, including the message type and text.
 
@@ -519,6 +528,8 @@ data ResponseMessage = ResponseMessage { type_ :: String, responseText :: String
 ```haskell
 let respMsg = ResponseMessage { type_ = "text", responseText = "Hi, how can I help you?" }
 ```
+
+</br>
 
 #### `Usage`
 Represents token usage statistics for a request, including input tokens, output tokens, and cache usage.
@@ -537,6 +548,8 @@ data Usage = Usage
 ```haskell
 let usage = Usage { input_tokens = 10, cache_creation_input_tokens = 5, cache_read_input_tokens = 2, output_tokens = 8 }
 ```
+
+</br>
 
 #### `ChatResponse`
 Represents the response from the Claude API for a chat request, including the response ID, type, content, and usage.
@@ -569,6 +582,8 @@ let chatResp = ChatResponse
     }
 ```
 
+</br>
+
 #### `ModelRequest`
 Represents a request for a list of models from the Claude API, with optional parameters for filtering the models.
 
@@ -585,6 +600,8 @@ data ModelRequest = ModelRequest
 ```haskell
 let modelReq = ModelRequest { beforeID = Just "model_123", afterID = Just "model_456", limit = Just 10 }
 ```
+
+</br>
 
 #### `ModelData`
 Represents a model, with its ID, type, display name, and creation date.
@@ -604,6 +621,8 @@ data ModelData = Model
 let model = Model { modelType = "text", modelID = "model_123", displayName = "Claude Model", createdAt = "2024-12-01" }
 ```
 
+</br>
+
 #### `ModelResponse`
 Represents the response from the Claude API for a model list request, including a list of models and pagination data.
 
@@ -622,6 +641,8 @@ data ModelResponse = ModelResponse
 let modelResp = ModelResponse { modelData = [model], hasMore = True, firstID = Just "model_123", lastID = Just "model_456" }
 ```
 
+</br>
+
 #### `CountTokenRequest`
 Represents a request to count tokens used in a message.
 
@@ -638,6 +659,8 @@ data CountTokenRequest = CountTokenRequest
 ```haskell
 let countReq = CountTokenRequest { requestMessages = [reqMsg], model = "claude-3-5-sonnet-20241022", system = Nothing }
 ```
+
+</br>
 
 #### `CountTokenResponse`
 Represents the response from the Claude API for a token count request, including the number of input tokens.
