@@ -1,6 +1,6 @@
 # Claude-HS
 
-This library provides Haskell functions to interact with Claude's API, including listing and retrieving model information. It includes utilities for building API requests and handling responses.
+This library provides Haskell functions to interact with Claude's API, including sending text and image messages, listing and retrieving model information. It includes utilities for building API requests and handling responses.
 
 ## Table of Contents
 
@@ -65,6 +65,31 @@ This library provides Haskell functions to interact with Claude's API, including
    API_KEY=<api_key>
    ANTHROPIC_VERSION=<anthropic_version> # e.g. 2023-06-01
    ```
+
+## Usage
+
+Below is a guide to the key functionalities and corresponding functions.
+
+**Send text messages:** 
+[`chat`](#chat) [`defaultChatRequest`](#defaultchatrequest) [`ChatRequest`](#chatrequest)
+
+**Send image messages:** 
+[`chat`](#chat) [`defaultIOImageChatRequest`](#defaultioimagechatrequest) [`ChatRequest`](#chatrequest)
+
+**Use a pre-defined chatbot:** 
+[`chatBot`](#chatbot)
+
+**Count the number of tokens in a message:**
+[`countToken`](#counttoken) [`CountTokenRequest`](#counttokenrequest)
+
+**List all available models:**
+[`listModels`](#listmodels) [`defaultModelRequest`](#defaultmodelrequest)
+
+**Get model details:**
+[`getModel`](#getmodel)
+
+**Create custom requests to Anthropic's API:**
+[`sendRequest`](#sendrequest)
 
 ## Modules
 
@@ -139,16 +164,27 @@ sendRequest "POST" "/v1/messages" (Just req)
 
 #### `chat`
 
-Sends a `ChatRequest` to the Claude API and returns the response.
+Sends a `ChatRequest` consists of text and image to the Claude API and returns the response.
 
 **Type:**
 ```haskell
 chat :: ChatRequest -> IO (Either String ChatResponse)
 ```
 
-**Example:**
+**Examples:**
 ```haskell
 chat $ defaultChatRequest "Where is the capital of China?"
+```
+```haskell
+-- sending image with message
+main :: IO (Either String ChatResponse)
+main = do
+    let imagePath = "https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg"
+    let message = "What is in this image?"
+    result <- defaultIOImageChatRequest imagePath message
+    case result of
+        Left err -> return $ Left err
+        Right chatRequest -> chat chatRequest
 ```
 
 </br>
@@ -212,6 +248,21 @@ chatBot :: IO ()
 **Example:**
 ```haskell
 chatBot
+```
+
+**Output:**
+
+```
+
+Enter your first message (or type 'QUIT' to exit)
+
+Claude:
+-------
+Hi! How can I help you today?
+
+You:
+----
+...
 ```
 
 </br>
