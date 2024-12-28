@@ -3,23 +3,23 @@
 module ClaudeAPI.Chat where
 
 import ClaudeAPI.Types
-    ( ChatResponse(..),
-      ChatRequest(..),
-      RequestMessage(..),
-      RequestMessageContent(..),
-      ResponseMessage(..),
-      CountTokenRequest(..),
-      CountTokenResponse(..),
-      ImageSource (..),
+    ( ChatResponse(..)
+    , ChatRequest(..)
+    , RequestMessage(..)
+    , RequestMessageContent(..)
+    , ResponseMessage(..)
+    , CountTokenRequest(..)
+    , CountTokenResponse(..)
+    , ImageSource (..)
     )
-import ClaudeAPI.Config ( anthropicVersion, baseUrl )
+import ClaudeAPI.Config (baseUrl)
 
 import Configuration.Dotenv (loadFile, defaultConfig)  
 import Control.Exception (SomeException, try)
 import Data.Aeson (encode, decode, FromJSON, ToJSON)
 import Data.Char (toLower)
 import Data.List (isPrefixOf)
-import Data.Text (Text, pack)
+import Data.Text (Text)
 import Data.Text.Encoding (decodeUtf8)
 import Network.HTTP.Client 
 import Network.HTTP.Client.TLS (tlsManagerSettings)
@@ -57,10 +57,12 @@ sendRequest requestMethod endpoint chatReq  = do
     -- Try to load the API key from the .env file
     loadFile defaultConfig
     getApiKey <- try (getEnv "API_KEY") :: IO (Either SomeException String)
+    getAnthropicVersion <- try (getEnv "ANTHROPIC_VERSION") :: IO (Either SomeException String)
 
-    case getApiKey of 
-        Left _ -> return $ Left "error: API key not found"
-        Right apiKey -> do
+    case (getApiKey, getAnthropicVersion) of 
+        (Left _, _) -> return $ Left "error: API key not found"
+        (_, Left _) -> return $ Left "error: Anthropic version not found"
+        (Right apiKey, Right anthropicVersion) -> do
             -- Create a new HTTP manager
             manager <- newManager tlsManagerSettings
 
@@ -69,7 +71,6 @@ sendRequest requestMethod endpoint chatReq  = do
 
             -- Encode the request as JSON
             let claudeRequestBody = maybe mempty (RequestBodyLBS . encode) chatReq
-            putStrLn $ BL.unpack $ encode chatReq
 
             -- Create the request object 
             let request = initialRequest
@@ -110,17 +111,7 @@ chat req = sendRequest "POST" "/v1/messages" (Just req)
 
 addMessageToChatRequest :: String -> String -> ChatRequest -> ChatRequest
 addMessageToChatRequest r m req = 
-    ChatRequest {
-        model = model req,
-        messages = 
-            messages req ++
-            [ RequestMessage { role = r, content = Left m } ],
-        max_tokens = max_tokens req,
-        stop_sequences = stop_sequences req,
-        stream = stream req,
-        system = system req,
-        temperature = temperature req
-        }
+    req { messages = messages req ++ [RequestMessage { role = r, content = Left m }] }
 
 
 addResponseToChatRequest :: ChatRequest -> ChatResponse -> ChatRequest
@@ -160,7 +151,7 @@ chatBot = do
                     putStrLn ""
 
                     case userReply of 
-                        "QUIT" -> putStrLn "ESC pressed. Bye :)"
+                        "QUIT" -> return ()
                         _ -> do
                             let newChatReq = 
                                     addMessageToChatRequest "user" userReply updatedChatReq
@@ -169,9 +160,9 @@ chatBot = do
     
 defaultCountTokenRequest :: String -> CountTokenRequest
 defaultCountTokenRequest reqContent = CountTokenRequest 
-    { countTokenModel = "claude-3-5-sonnet-20241022"
-    , countTokenMessages = [RequestMessage { role = "user", content = Left reqContent }]
-    , countTokenSystem = Nothing
+    { model = "claude-3-5-sonnet-20241022"
+    , requestMessages = [RequestMessage { role = "user", content = Left reqContent }]
+    , system = Nothing
     }
 
     
@@ -186,43 +177,83 @@ getMediaType mediaPath =
         other -> "image/" ++ drop 1 other
 
 
-encodeImageToBase64 :: FilePath -> IO Text
+encodeImageToBase64 :: String -> IO (Either String Text)
 encodeImageToBase64 imagePath = do
-    fileExists <- doesFileExist imagePath
-    if not fileExists
-        then return $ pack "Error: File does not exist."
-        else do
-            imageBytes <- BS.readFile imagePath 
-            let imageBytesB64 = B64.encode imageBytes
-            return $ decodeUtf8 imageBytesB64
-    
+    if  "https://" `isPrefixOf` imagePath
+        then do 
+            -- fetch online image
+            -- Create a new HTTP manager
+            manager <- newManager tlsManagerSettings
 
-defaultImageChatRequest :: String -> String -> IO ChatRequest
-defaultImageChatRequest imagePath message = do
-    imageSource <- ioImageSource
-    return ChatRequest 
-        { model = "claude-3-5-sonnet-20241022"
-        , messages = 
-            [ RequestMessage
-                { role = "user"
-                , content = 
-                    Right
-                        [ ImageContent { msgType = "image", source = imageSource }
-                        , TextContent { msgType = "text", text = message }
-                        ]
+            -- Parse the base URL and get the response e
+            request <- parseRequest imagePath
+            response <- httpLbs request manager
+
+            let responseStatus' = responseStatus response
+            let responseBody' = responseBody response
+
+            case statusCode responseStatus' of
+                200 -> do
+                    -- Encode the image into base64 format
+                    let imageBytes = responseBody response
+                    let imageBytesB64 = B64.encode (BL.toStrict imageBytes)
+                    return $ Right $ decodeUtf8 imageBytesB64
+                            
+                code -> do 
+                    -- Decode the error response body into a string
+                    let errorDetails = BL.unpack responseBody'
+                    let responseStatusMessage' = statusMessage responseStatus'
+                    return $ Left $ "error " ++ show code ++ ": " ++ BS.unpack responseStatusMessage' ++ ". " ++ errorDetails
+
+        else do
+            -- Vheck whether the local image exists
+            fileExists <- doesFileExist imagePath
+
+            if not fileExists
+                then return $ Left "error: File does not exist."
+                else do
+                    -- Encode the image into base64 format
+                    imageBytes <- BS.readFile imagePath 
+                    let imageBytesB64 = B64.encode imageBytes
+                    return $ Right $ decodeUtf8 imageBytesB64
+        
+
+defaultIOImageChatRequest :: String -> String -> IO (Either String ChatRequest)
+defaultIOImageChatRequest imagePath message = do
+    encodedImageResult <- encodeImageToBase64 imagePath
+    case encodedImageResult of 
+        Left err -> return $ Left err
+        Right encodedImage -> do
+            let imageSource = ImageSource 
+                    { encodingType = "base64"
+                    , mediaType = getMediaType imagePath
+                    , imageData = encodedImage
+                    }
+            return $ Right ChatRequest 
+                { model = "claude-3-5-sonnet-20241022"
+                , messages = 
+                    [ RequestMessage
+                        { role = "user"
+                        , content = 
+                            Right
+                                [ ImageContent { msgType = "image", source = imageSource }
+                                , TextContent { msgType = "text", text = message }
+                                ]
+                        }
+                    ]
+                , max_tokens = 1024
+                , stop_sequences = Nothing
+                , stream = Nothing
+                , system = Nothing
+                , temperature = Nothing
                 }
-            ]
-        , max_tokens = 1024
-        , stop_sequences = Nothing
-        , stream = Nothing
-        , system = Nothing
-        , temperature = Nothing
-        }
-    where 
-        ioImageSource = do
-            encodedImage <- encodeImageToBase64 imagePath
-            return ImageSource 
-                { encodingType = "base64"
-                , mediaType = getMediaType imagePath
-                , imageData = encodedImage
-                }
+
+
+test :: IO (Either String ChatResponse)
+test = do
+    let imagePath = "https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg"
+    let message = "What is in this image?"
+    result <- defaultIOImageChatRequest imagePath message
+    case result of
+        Left err -> return $ Left err
+        Right chatRequest -> chat chatRequest

@@ -10,10 +10,9 @@ import Data.Maybe (catMaybes)
 defaultModelRequest :: ModelRequest
 defaultModelRequest =
     ModelRequest
-        {
-        requestBeforeID = Nothing,
-        requestafterID = Nothing,
-        limit = Nothing
+        { beforeID = Nothing
+        , afterID = Nothing
+        , limit = Nothing
         }
 
 
@@ -24,8 +23,8 @@ buildQueryString req =
         _ -> "?" ++ intercalate "&" params
         where
             params = catMaybes
-                [ fmap ("before_id=" ++) (requestBeforeID req)
-                , fmap ("after_id=" ++) (requestafterID req)
+                [ fmap ("before_id=" ++) (beforeID req)
+                , fmap ("after_id=" ++) (afterID req)
                 , fmap (\v -> "limit=" ++ show v) (limit req)
                 ]
 
