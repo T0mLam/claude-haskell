@@ -12,38 +12,34 @@ This library provides Haskell functions to interact with Claude's API, including
     - [defaultChatRequest](#defaultchatrequest)
     - [defaultCountTokenRequest](#defaultcounttokenrequest)
     - [defaultIOImageChatRequest](#defaultioimagechatrequest)
-    - [sendRequest](#sendrequest)
-    - [chat](#chat)
+    - [sendRequest*](#sendrequest)
+    - [chat*](#chat)
     - [addMessageToChatRequest](#addmessagetochatrequest)
     - [addResponseToChatRequest](#addresponsetochatrequest)
-    - [chatBot](#chatbot)
-    - [countToken](#counttoken)
+    - [chatBot*](#chatbot)
+    - [countToken*](#counttoken)
     - [getMediaType](#getmediatype)
     - [encodeImageToBase64](#encodeimagetobase64)
   - [**ClaudeAPI.Models**](#claudeapimodels)
     - [defaultModelRequest](#defaultmodelrequest)
-    - [listModels](#listmodels)
-    - [getModel](#getmodel)
+    - [listModels*](#listmodels)
+    - [getModel*](#getmodel)
   - [**ClaudeAPI.Types**](#claudeapiconfig)
     - [ImageSource](#imagesource)
     - [RequestMessageContent](#requestmessagecontent)
     - [RequestMessage](#requestmessage)
-    - [ChatRequest](#chatrequest)
+    - [ChatRequest*](#chatrequest)
     - [ResponseMessage](#responsemessage)
     - [Usage](#usage)
-    - [ChatResponse](#chatresponse)
-    - [ModelRequest](#modelrequest)
+    - [ChatResponse*](#chatresponse)
+    - [ModelRequest*](#modelrequest)
     - [ModelData](#modeldata)
-    - [ModelResponse](#modelresponse)
-    - [CountTokenRequest](#counttokenrequest)
-    - [CountTokenResponse](#counttokenresponse)
+    - [ModelResponse*](#modelresponse)
+    - [CountTokenRequest*](#counttokenrequest)
+    - [CountTokenResponse*](#counttokenresponse)
 - [Testing](#testing)
 - [Contributing](#contributing)
 - [License](#license)
-
---- 
-
-This table of contents helps to navigate the key types in the module for easier reference.
 
 ---
 
@@ -88,10 +84,6 @@ baseUrl = "https://api.anthropic.com"
 ```haskell
 let url = baseUrl ++ "/v1/models"
 ```
-
----
-
-Here's the documentation in the requested format for the `ClaudeAPI.Chat` module:
 
 ---
 
