@@ -65,6 +65,7 @@ library
         ClaudeAPI.Models
         ClaudeAPI.Config
         ClaudeAPI.Types
+        ClaudeAPI
 
     -- Modules included in this library but not exported.
     -- other-modules:
