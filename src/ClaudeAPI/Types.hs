@@ -8,8 +8,17 @@
 
 module ClaudeAPI.Types where
 import Data.Aeson 
+import Data.Char (isUpper, toLower)
 import Data.Text (Text)
-import GHC.Generics
+import GHC.Generics (Generic)
+
+
+camelToUnderscore :: String -> String
+camelToUnderscore = concatMap toUnderscore
+    where 
+        toUnderscore c
+            | isUpper c = ['_', toLower c]
+            | otherwise = [c]
 
 
 data ImageSource = ImageSource 
@@ -216,7 +225,8 @@ instance ToJSON CountTokenRequest where
         }
     
 
-data CountTokenResponse = CountTokenResponse { inputTokens :: Int } 
+newtype CountTokenResponse = 
+    CountTokenResponse { inputTokens :: Int } 
     deriving (Generic, Show)
 
 instance FromJSON CountTokenResponse where
@@ -226,3 +236,80 @@ instance FromJSON CountTokenResponse where
                 "inputTokens" -> "input_tokens"
         }
 
+
+-- Message Batch Types
+data MessageBatchRequest = MessageBatchRequest
+    { customID :: String
+    , params :: ChatRequest
+    }
+    deriving (Show, Generic)
+
+instance ToJSON MessageBatchRequest where
+    toJSON = genericToJSON defaultOptions 
+        { fieldLabelModifier = 
+            \case 
+                "customID" -> "custom_id"
+                other -> other
+        }
+
+newtype MessageBatchRequests = 
+    MessageBatchRequests { requests :: [MessageBatchRequest]}
+    deriving (Show, Generic, ToJSON)
+
+data MessageBatchRequestCount = MessageBatchRequestCount
+    { processing :: Int
+    , succeeded :: Int
+    , errored :: Int
+    , canceled :: Int
+    , expired :: Int
+    } deriving (Show, Generic, FromJSON)
+
+data MessageBatchResponse = MessageBatchResponse
+    { id :: String
+    , responseType :: String
+    , processingStatus :: String
+    , requestCounts :: MessageBatchRequestCount
+    , endedAt :: Maybe String
+    , createdAt :: String
+    , expiresAt :: String
+    , archivedAt :: Maybe String
+    , cancelInitiatedAt :: Maybe String
+    , resultsUrl :: Maybe String
+    }
+    deriving (Show, Generic)
+
+instance FromJSON MessageBatchResponse where
+    parseJSON = genericParseJSON defaultOptions 
+        { omitNothingFields = True
+        , fieldLabelModifier = 
+            \case 
+                "responseType" -> "type"
+                other -> camelToUnderscore other
+        }
+
+data ListMessageBatchRequest = ListMessageBatchRequest 
+    { beforeID :: Maybe String
+    , afterID :: Maybe String
+    , limit :: Maybe Int
+    } 
+    deriving (Show, Generic)
+    
+instance ToJSON ListMessageBatchRequest where
+    toJSON = genericToJSON defaultOptions 
+        { omitNothingFields = True
+        , fieldLabelModifier = 
+            \case 
+                "beforeID" -> "before_id"
+                "afterID" -> "after_id"
+        }
+
+newtype ListMessageBatchResponse = 
+    ListMessageBatchResponse { responseData :: [MessageBatchResponse] }
+    deriving (Show, Generic)
+
+instance FromJSON ListMessageBatchResponse where
+    parseJSON = genericParseJSON defaultOptions 
+        { fieldLabelModifier = 
+            \case 
+                "responseData" -> "data"
+        }

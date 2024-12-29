@@ -1,10 +1,16 @@
+{-# OPTIONS_GHC -Wno-orphans #-}
 module ClaudeAPI.Models where
 
 import ClaudeAPI.Chat (sendRequest)
-import ClaudeAPI.Types (ModelRequest(..), ModelResponse(..), ModelData(..))
-
-import Data.List (intercalate)
-import Data.Maybe (catMaybes)
+import ClaudeAPI.Types 
+    ( ModelRequest(..)
+    , ModelResponse(..)
+    , ModelData(..)
+    )
+import ClaudeAPI.Utils 
+    ( buildQueryString
+    , HasQueryParams (..)
+    )
 
 
 defaultModelRequest :: ModelRequest
@@ -16,17 +22,10 @@ defaultModelRequest =
         }
 
 
-buildQueryString :: ModelRequest -> String
-buildQueryString req =
-    case params of
-        [] -> ""
-        _ -> "?" ++ intercalate "&" params
-        where
-            params = catMaybes
-                [ fmap ("before_id=" ++) (beforeID req)
-                , fmap ("after_id=" ++) (afterID req)
-                , fmap (\v -> "limit=" ++ show v) (limit req)
-                ]
+instance HasQueryParams ModelRequest where 
+    getBeforeID = beforeID
+    getAfterID = afterID
+    getLimit = limit
 
 
 listModels :: ModelRequest -> IO (Either String ModelResponse)
