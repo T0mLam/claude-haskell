@@ -112,3 +112,4 @@ scripts/release/binary-downloads/
 .env
 *.jpg
 *.rest
+*.pdf

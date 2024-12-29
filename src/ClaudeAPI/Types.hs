@@ -16,19 +16,23 @@ import GHC.Generics (Generic)
 import qualified Data.ByteString.Lazy.Char8 as BL
 
 
+-- | A class representing types that can be decoded from JSON responses.
 class FromJSON a => JSONResponse a where
     parseResponse :: BL.ByteString -> Either String a
     parseResponse = eitherDecode
 
-
-data ImageSource = ImageSource
+-- | Represents an image source with metadata.
+data MediaSource = MediaSource
     { encodingType :: String
+    -- ^ The encoding type of the image (e.g., "base64").
     , mediaType :: String
+    -- ^ The MIME type of the image (e.g., "image/png").
     , imageData :: Text
+    -- ^ The actual image data
     }
     deriving (Show, Generic)
 
-instance ToJSON ImageSource where
+instance ToJSON MediaSource where
     toJSON = genericToJSON defaultOptions
         { omitNothingFields = True
         , fieldLabelModifier =
@@ -38,9 +42,12 @@ instance ToJSON ImageSource where
                 "imageData" -> "data"
         }
 
+-- | Represents the content of a request message, which can be text or an image.
 data RequestMessageContent =
-    ImageContent { msgType :: String, source :: ImageSource }
+    MediaContent { msgType :: String, source :: MediaSource }
+    -- ^ Content for an image message.
     | TextContent { msgType :: String, text :: String }
+    -- ^ Content for a text message.
     deriving (Show, Generic)
 
 instance ToJSON RequestMessageContent where
@@ -53,9 +60,12 @@ instance ToJSON RequestMessageContent where
                 other -> other
         }
 
+-- | Represents a request message sent to the API.
 data RequestMessage = RequestMessage
     { role :: String
+    -- ^ The role of the message sender (e.g., "user").
     , content :: Either String [RequestMessageContent]
+    -- ^ The message content (string or list of structured content).
     }
     deriving (Show, Generic)
 
@@ -69,15 +79,22 @@ instance ToJSON RequestMessage where
                     Right msgs -> toJSON msgs
             ]
 
-
+-- | Represents a chat request containing multiple messages and metadata.
 data ChatRequest = ChatRequest
     { model :: String
+    -- ^ The name of the model to use.
     , messages :: [RequestMessage]
+    -- ^ The list of messages in the chat.
     , maxTokens :: Int
+    -- ^ The maximum number of tokens to generate.
     , stopSequences :: Maybe String
+    -- ^ Optional stop sequences for the response.
     , stream :: Maybe Bool
+    -- ^ Whether to stream the response.
     , system :: Maybe String
+    -- ^ Optional system configuration.
     , temperature :: Maybe Double
+    -- ^ Temperature for the response.
     }
     deriving (Generic)
 
@@ -99,7 +116,6 @@ instance ToJSON ChatRequest where
         { omitNothingFields = True 
         , fieldLabelModifier = camelToUnderscore 
         }
-
 
 data ResponseMessage = ResponseMessage { responseType :: String, responseText :: String }
     deriving (Show, Generic)
@@ -124,15 +140,24 @@ instance FromJSON Usage where
     parseJSON = genericParseJSON defaultOptions
         { fieldLabelModifier = camelToUnderscore }
 
+-- | Represents the full chat response from the API.
 data ChatResponse = ChatResponse
     { id :: String
+    -- ^ The unique identifier for the response.
     , responseType :: String
+    -- ^ The type of the response.
     , responseRole :: String
+    -- ^ The role of the responder (e.g., "assistant").
     , responseContent :: [ResponseMessage]
+    -- ^ The content of the response.
     , responseModel :: String
+    -- ^ The model used to generate the response.
     , stopReason :: String
+    -- ^ The reason for stopping the response generation.
     , stopSequence :: Maybe String
+    -- ^ The stop sequence that triggered the stop, if any.
     , usage :: Usage
+    -- ^ Token usage details.
     }
     deriving (Generic, JSONResponse)
 

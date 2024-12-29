@@ -8,7 +8,8 @@ import ClaudeAPI.Types
     , MessageBatchRequests (..)
     , MessageBatchResponse (..)
     , ListMessageBatchRequest (..)
-    , ListMessageBatchResponse (..), RetrieveMessageBatchResults
+    , ListMessageBatchResponse (..)
+    , RetrieveMessageBatchResults (..)
     )
 import ClaudeAPI.Utils (HasQueryParams (..), buildQueryString)
 

@@ -1,11 +1,12 @@
 module ClaudeAPI 
 ( -- Configurations
   baseUrl
+, defaultModel
 
   -- Send messages to Claude
 , defaultChatRequest
 , defaultCountTokenRequest
-, defaultIOImageChatRequest
+, defaultIOMediaChatRequest
 , sendRequest
 , chat
 , addMessageToChatRequest
@@ -13,7 +14,7 @@ module ClaudeAPI
 , chatBot
 , countToken
 , getMediaType
-, encodeImageToBase64
+, encodeMediaToBase64
 
   -- Send message batches to Claude
 , createMessageBatch
@@ -28,7 +29,7 @@ module ClaudeAPI
 , defaultModelRequest
 
   -- Types 
-, ImageSource (..)
+, MediaSource (..)
 , RequestMessageContent (..)
 , RequestMessage (..)
 , ChatRequest (..)
@@ -40,14 +41,18 @@ module ClaudeAPI
 , ModelResponse (..)
 , CountTokenRequest (..)
 , CountTokenResponse (..)
+
+  -- Utility functions for building data types
+, camelToUnderscore
+, buildQueryString   
 ) 
 where
 
-import ClaudeAPI.Config (baseUrl)
+import ClaudeAPI.Config (baseUrl, defaultModel)
 import ClaudeAPI.Chat
     ( defaultChatRequest
     , defaultCountTokenRequest
-    , defaultIOImageChatRequest
+    , defaultIOMediaChatRequest
     , sendRequest
     , chat
     , addMessageToChatRequest
@@ -55,7 +60,7 @@ import ClaudeAPI.Chat
     , chatBot
     , countToken
     , getMediaType
-    , encodeImageToBase64
+    , encodeMediaToBase64
     )
 import ClaudeAPI.MessageBatches
     ( cancelMessageBatch
@@ -66,7 +71,7 @@ import ClaudeAPI.MessageBatches
     ) 
 import ClaudeAPI.Models (listModels, getModel, defaultModelRequest)
 import ClaudeAPI.Types
-    ( ImageSource (..)
+    ( MediaSource (..)
     , RequestMessageContent (..)
     , RequestMessage (..)
     , ChatRequest (..)
@@ -79,3 +84,7 @@ import ClaudeAPI.Types
     , CountTokenRequest (..)
     , CountTokenResponse (..)
     ) 
+import ClaudeAPI.Utils 
+    ( camelToUnderscore
+    , buildQueryString   
+    )
