@@ -2,13 +2,13 @@
 
 module ClaudeAPI.MessageBatches where
 
-import ClaudeAPI.Chat (sendRequest)
-import ClaudeAPI.Types 
+import ClaudeAPI.Chat (sendRequest, defaultChatRequest)
+import ClaudeAPI.Types
     ( MessageBatchRequest (..)
     , MessageBatchRequests (..)
     , MessageBatchResponse (..)
     , ListMessageBatchRequest (..)
-    , ListMessageBatchResponse (..)
+    , ListMessageBatchResponse (..), RetrieveMessageBatchResults
     )
 import ClaudeAPI.Utils (HasQueryParams (..), buildQueryString)
 
@@ -48,3 +48,26 @@ cancelMessageBatch messageBatchID =
         "POST"
         ("/v1/messages/batches/" ++ messageBatchID ++ "/cancel") 
         (Nothing :: Maybe MessageBatchRequests)
+
+
+retrieveMessageBatchResults :: String -> IO (Either String RetrieveMessageBatchResults)
+retrieveMessageBatchResults messageBatchID = 
+    sendRequest
+        "GET"
+        ("/v1/messages/batches/" ++ messageBatchID ++ "/results")
+        (Nothing :: Maybe MessageBatchRequests)
+
+
+testMessageBatchRequests :: MessageBatchRequests
+testMessageBatchRequests = MessageBatchRequests
+    { requests = 
+        [ MessageBatchRequest 
+            { customID = "test1"     
+            , params = defaultChatRequest "Hello World"
+            }
+        , MessageBatchRequest 
+            { customID = "test2"     
+            , params = defaultChatRequest "Hi Claude"
+            }
+        ]
+    }

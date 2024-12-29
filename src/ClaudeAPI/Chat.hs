@@ -11,12 +11,13 @@ import ClaudeAPI.Types
     , CountTokenRequest (..)
     , CountTokenResponse (..)
     , ImageSource (..)
+    , JSONResponse (..)
     )
 import ClaudeAPI.Config (baseUrl)
 
 import Configuration.Dotenv (loadFile, defaultConfig)  
 import Control.Exception (SomeException, try)
-import Data.Aeson (encode, decode, FromJSON, ToJSON)
+import Data.Aeson (encode, ToJSON)
 import Data.Char (toLower)
 import Data.List (isPrefixOf)
 import Data.Text (Text)
@@ -38,8 +39,8 @@ defaultChatRequest :: String -> ChatRequest
 defaultChatRequest reqContent = ChatRequest 
     { model = "claude-3-5-sonnet-20241022"
     , messages = [RequestMessage { role = "user", content = Left reqContent }]
-    , max_tokens = 1024
-    , stop_sequences = Nothing
+    , maxTokens = 1024
+    , stopSequences = Nothing
     , stream = Nothing
     , system = Nothing
     , temperature = Nothing
@@ -48,12 +49,12 @@ defaultChatRequest reqContent = ChatRequest
 
 -- Send any request to the Claude API
 sendRequest
-    :: (ToJSON req, FromJSON resp) 
+    :: (ToJSON req, JSONResponse resp) 
     => String -- request method
     -> String -- endpoint
     -> Maybe req 
     -> IO (Either String resp)
-sendRequest requestMethod endpoint chatReq  = do
+sendRequest requestMethod endpoint chatReq = do
     -- Try to load the API key from the .env file
     loadFile defaultConfig
     getApiKey <- try (getEnv "API_KEY") :: IO (Either SomeException String)
@@ -90,19 +91,20 @@ sendRequest requestMethod endpoint chatReq  = do
             let responseBody' = responseBody response
 
             case statusCode responseStatus' of
-                200 -> do
-                    -- Decode the response body into an object
-                    let mayResponseBody = decode responseBody'
-
-                    case mayResponseBody of
-                        Just responseBodyObject -> return $ Right responseBodyObject
-                        Nothing -> return $ Left "error: failed to decode response body"
+                200 -> case parseResponse responseBody' of
+                    -- Decode the json or jsonl response into data object
+                    Right responseBodyObject -> return $ Right responseBodyObject
+                    Left err -> return $ Left $ "error: failed to decode response body" ++ err
                     
                 code -> do 
                     -- Decode the error response body into a string
                     let errorDetails = BL.unpack responseBody'
                     let responseStatusMessage' = statusMessage responseStatus'
-                    return $ Left $ "error " ++ show code ++ ": " ++ BS.unpack responseStatusMessage' ++ ". " ++ errorDetails
+                    return $ 
+                        Left $ 
+                            "error " ++ show code ++ ": " 
+                            ++ BS.unpack responseStatusMessage' 
+                            ++ ". " ++ errorDetails
 
 
 chat :: ChatRequest -> IO (Either String ChatResponse)
@@ -241,8 +243,8 @@ defaultIOImageChatRequest imagePath message = do
                                 ]
                         }
                     ]
-                , max_tokens = 1024
-                , stop_sequences = Nothing
+                , maxTokens = 1024
+                , stopSequences = Nothing
                 , stream = Nothing
                 , system = Nothing
                 , temperature = Nothing

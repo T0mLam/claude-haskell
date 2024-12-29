@@ -1,5 +1,6 @@
 module ClaudeAPI.Utils where 
 
+import Data.Char (isUpper, toLower)
 import Data.List (intercalate)
 import Data.Maybe (catMaybes)
 
@@ -21,3 +22,11 @@ buildQueryString req =
                 , fmap ("after_id=" ++) (getAfterID req)
                 , fmap (\v -> "limit=" ++ show v) (getLimit req)
                 ]
+
+    
+camelToUnderscore :: String -> String
+camelToUnderscore = concatMap toUnderscore
+    where 
+        toUnderscore c
+            | isUpper c = ['_', toLower c]
+            | otherwise = [c]

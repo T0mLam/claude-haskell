@@ -15,6 +15,13 @@ module ClaudeAPI
 , getMediaType
 , encodeImageToBase64
 
+  -- Send message batches to Claude
+, createMessageBatch
+, retrieveMessageBatch
+, listMessageBatch
+, cancelMessageBatch
+, retrieveMessageBatchResults
+
   -- Get model info
 , listModels
 , getModel
@@ -50,7 +57,13 @@ import ClaudeAPI.Chat
     , getMediaType
     , encodeImageToBase64
     )
-import ClaudeAPI.MessageBatches ()
+import ClaudeAPI.MessageBatches
+    ( cancelMessageBatch
+    , createMessageBatch
+    , listMessageBatch
+    , retrieveMessageBatch
+    , retrieveMessageBatchResults 
+    ) 
 import ClaudeAPI.Models (listModels, getModel, defaultModelRequest)
 import ClaudeAPI.Types
     ( ImageSource (..)
