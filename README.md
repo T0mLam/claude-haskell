@@ -41,7 +41,7 @@ This library provides Haskell functions to interact with the Claude API, includi
         - [listModels](#listmodels)
         - [getModel](#getmodel)
     - [**ClaudeAPI.Types**](#claudeapitypes)
-        - [JSONResponse: parseResponse](#jsonresponse-parseresponse)
+        - [JSONResponse: parseResponse](#typeclass-jsonresponse)
         - [MediaSource](#mediasource)
         - [RequestMessageContent](#requestmessagecontent)
         - [RequestMessage](#requestmessage)
@@ -61,7 +61,7 @@ This library provides Haskell functions to interact with the Claude API, includi
         - [ListMessageBatchResponse](#listmessagebatchresponse)
         - [MessageBatchResult](#messagebatchresult)
         - [RetrieveMessageBatchResult](#retrievemessagebatchresult)
-        - [RetrieveMessageBatchResults](#retrievemessagebatchresults)
+        - [RetrieveMessageBatchResults](#retrievemessagebatchresults-1)
     - [**ClaudeAPI.Utils**](#claudeapiutils)
         - [buildQueryString](#buildquerystring)
         - [camelToUnderscore](#cameltounderscore)
@@ -1089,9 +1089,7 @@ newtype RetrieveMessageBatchResults =
 ```
 
 - **Purpose:** Provides a unified structure for accessing all batch results.
-- **JSON Parsing:** Supports parsing from newline-delimited JSON (`NDJSON`) formats.
-
-Here is the documentation without implementation details:
+- **JSON Parsing:** Supports parsing from multi-lines JSONL formats.
 
 </br>
 
