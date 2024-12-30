@@ -1,5 +1,5 @@
 #  claude-haskell 
-claude-haskell is an unofficial binding for the Anthropic's API for Claude.
+claude-haskell is an unofficial binding for Anthropic's Claude API.
 
 This library provides Haskell functions to interact with the Claude API, including sending text messages, images, pdf documents, listing and retrieving model information, and create message batches. It includes utilities and types for building API requests and handling responses.
 
