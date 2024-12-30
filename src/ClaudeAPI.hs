@@ -15,6 +15,7 @@ module ClaudeAPI
 , countToken
 , getMediaType
 , encodeMediaToBase64
+, addMediaToChatRequest
 
   -- Send message batches to Claude
 , createMessageBatch
@@ -41,6 +42,13 @@ module ClaudeAPI
 , ModelResponse (..)
 , CountTokenRequest (..)
 , CountTokenResponse (..)
+, MessageBatchRequest (..)
+, MessageBatchRequestCount (..)
+, MessageBatchResponse (..)
+, ListMessageBatchRequest (..)
+, ListMessageBatchResponse (..)
+, MessageBatchResult (..)
+, RetrieveMessageBatchResult (..)
 
   -- Utility functions for building data types
 , camelToUnderscore
@@ -61,6 +69,7 @@ import ClaudeAPI.Chat
     , countToken
     , getMediaType
     , encodeMediaToBase64
+    , addMediaToChatRequest
     )
 import ClaudeAPI.MessageBatches
     ( cancelMessageBatch
@@ -83,6 +92,13 @@ import ClaudeAPI.Types
     , ModelResponse (..)
     , CountTokenRequest (..)
     , CountTokenResponse (..)
+    , MessageBatchRequest (..)
+    , MessageBatchRequestCount (..)
+    , MessageBatchResponse (..)
+    , ListMessageBatchRequest (..)
+    , ListMessageBatchResponse (..)
+    , MessageBatchResult (..)
+    , RetrieveMessageBatchResult (..)
     ) 
 import ClaudeAPI.Utils 
     ( camelToUnderscore

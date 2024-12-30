@@ -12,26 +12,28 @@ import ClaudeAPI.Chat
     , countToken
     , getMediaType
     , encodeMediaToBase64
+    , addMediaToChatRequest
     )
 import ClaudeAPI.Types 
     ( ChatRequest (..)
     , ChatResponse (..)
-    , RequestMessage (role)
+    , RequestMessage (..)
     , ResponseMessage (responseText)
-    , RequestMessageContent (..)
     , CountTokenResponse (..)
     )
 
 import Data.List (isInfixOf)
 import Test.Hspec
+import Data.Either (isRight)
 
+testFileUrl :: String 
+testFileUrl = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
 
 testMediaRequest :: IO (Either String ChatRequest)
 testMediaRequest = do
-    let mediaPath = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+    let mediaPath = testFileUrl
     let message = "What is written in this file?"
     defaultIOMediaChatRequest mediaPath message
-    
 
 spec :: Spec
 spec = do
@@ -104,8 +106,20 @@ spec = do
                                     
     describe "encodeMediaToBase64" $ do 
         it "encodes a media file into base64 format successfully" $ do
-            mediaBytes <- encodeMediaToBase64 
-                "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
+            mediaBytes <- encodeMediaToBase64 testFileUrl
             case mediaBytes of 
                 Left err -> expectationFailure $ "Failed to encode the media file: " ++ err
                 Right _ -> pure ()
+
+    describe "addMediaToChatRequest" $ do 
+        it "add a message and a media file to the ChatRequest object successfully" $ do
+            let originalReq = defaultChatRequest "Hello world" 
+            mediaReq <- addMediaToChatRequest testFileUrl "What is written in the file" originalReq
+            case mediaReq of 
+                Left err -> expectationFailure $ "Failed to fetch media file: " ++ err
+                Right req -> do
+                    model req `shouldBe` defaultModel
+                    let messages' = messages req
+                    length messages' `shouldBe` 2
+                    role (last messages') `shouldBe` "user"
+                    content (last messages') `shouldSatisfy` isRight

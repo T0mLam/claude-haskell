@@ -22,5 +22,3 @@ spec = do
             camelToUnderscore "beforeId" `shouldBe` "before_id"
         it "converts the string 'id' into 'id'" $ do
             camelToUnderscore "id" `shouldBe` "id"
-
-        

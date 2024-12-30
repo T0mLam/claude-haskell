@@ -265,17 +265,17 @@ chatBot = do
                         _ -> do
                             if isMediaRequest userReply
                                 then do
-                                    -- New image message
-                                    -- Get the instructions for the image request.
+                                    -- New media message
+                                    -- Get the instructions for the media request.
                                     putStr "Instructions: "  
                                     instructions <- getLine
                                     putStrLn ""
 
-                                    -- Try loading the image into the request
-                                    let imagePath = drop 6 userReply
-                                    imageRequest <- addMediaToChatRequest imagePath instructions updatedChatReq
+                                    -- Try loading the media into the request
+                                    let mediaPath = drop 6 userReply
+                                    mediaRequest <- addMediaToChatRequest mediaPath instructions updatedChatReq
 
-                                    case imageRequest of
+                                    case mediaRequest of
                                         Left err -> putStrLn err
                                         Right newChatReq -> chatHelper newChatReq
                                 else do 
