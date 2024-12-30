@@ -107,7 +107,6 @@ test-suite claude-haskell-test
     other-modules:    ClaudeAPI.ChatSpec
                       ClaudeAPI.MessageBatchesSpec
                       ClaudeAPI.ModelsSpec
-                      ClaudeAPI.TypesSpec
                       ClaudeAPI.UtilsSpec
 
     -- LANGUAGE extensions used by modules in this package.

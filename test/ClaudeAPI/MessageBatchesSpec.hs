@@ -1,4 +1,3 @@
-
 module ClaudeAPI.MessageBatchesSpec where
     
 import ClaudeAPI.Chat (defaultChatRequest)

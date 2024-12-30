@@ -219,25 +219,6 @@ defaultIOMediaChatRequest mediaPath message = do
                 }
 
 
-test :: IO (Either String ChatResponse)
-test = do
-    let mediaPath = "https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg"
-    let message = "What is in this image?"
-    result <- defaultIOMediaChatRequest mediaPath message
-    case result of
-        Left err -> return $ Left err
-        Right chatRequest -> chat chatRequest
-
-test2 :: IO (Either String ChatResponse)
-test2 = do
-    let mediaPath = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-    let message = "What text is in this file?"
-    result <- defaultIOMediaChatRequest mediaPath message
-    case result of
-        Left err -> return $ Left err
-        Right chatRequest -> chat chatRequest
-
-
 addMediaToChatRequest :: String -> String -> ChatRequest -> IO (Either String ChatRequest)
 addMediaToChatRequest mediaPath message req = do
     imageRequest <- defaultIOMediaChatRequest mediaPath message
