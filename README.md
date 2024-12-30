@@ -11,8 +11,6 @@ This library provides Haskell functions to interact with the Claude API, includi
 - [Contributing](#contributing)
 - [License](#license)
 
----
-
 ## Installation
 
 1. Clone the repository:
@@ -34,9 +32,7 @@ This library provides Haskell functions to interact with the Claude API, includi
    ```bash
    API_KEY=<api_key>
    ANTHROPIC_VERSION=<anthropic_version> # e.g. 2023-06-01
-   ```
-
----
+   ``` 
 
 ## Usage
 
@@ -118,8 +114,6 @@ main = do
                     putStrLn $ "Bot: " ++ botReply
 ```
 
-</br>
-
 ### Use a pre-defined chatbot
 
 `chatBot`
@@ -134,8 +128,6 @@ chatBot :: IO ()
 main :: IO ()
 main = chatBot
 ```
-
-</br>
 
 ### Count the number of tokens in a message
 
@@ -173,8 +165,6 @@ main = do
 **Notes:**
 Create custom `CountTokenRequest` for counting tokens for media requests.
 
-</br>
-
 ### List all available models
 
 `listModels` `defaultModelRequest`
@@ -187,8 +177,6 @@ listModels :: ModelRequest -> IO (Either String ModelResponse)
 defaultModelRequest :: ModelRequest
 ```
 
-</br>
-
 ### Get model details
 
 `getModel`
@@ -196,8 +184,6 @@ defaultModelRequest :: ModelRequest
 ```haskell
 getModel :: String -> IO (Either String ModelData)
 ```
-
-</br>
 
 ### Message batch operations
 
@@ -234,8 +220,6 @@ retrieveMessageBatchResults
     -> IO (Either String RetrieveMessageBatchResults)
 ```
 
-</br>
-
 ### Create custom requests to Anthropic's API
 
 `sendRequest`
@@ -265,8 +249,6 @@ exampleFunc :: ExampleReq -> IO (Either String ExampleResp)
 exampleFunc req = sendRequest "POST" "/v1/messages" (Just req)
 ```
 
----
-
 ## Testing
 
 Run the tests using Cabal:
@@ -275,8 +257,6 @@ cabal test
 ```
 
 Test examples can be found in `test/Main.hs` and `test/ClaudeAPI`.
-
----
 
 ## Contributing
 
