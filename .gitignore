@@ -113,3 +113,4 @@ scripts/release/binary-downloads/
 *.jpg
 *.rest
 *.pdf
+README_copy.md
