@@ -203,7 +203,7 @@ instance ToJSON ModelRequest where
                 "afterID" -> "after_id"
         }
 
-data ModelData = Model
+data ModelData = ModelData
     { modelType :: String
     , modelID :: String
     , displayName :: String

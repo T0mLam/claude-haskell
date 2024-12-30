@@ -2,10 +2,9 @@
 
 module ClaudeAPI.MessageBatches where
 
-import ClaudeAPI.Chat (sendRequest, defaultChatRequest)
+import ClaudeAPI.Chat (sendRequest)
 import ClaudeAPI.Types
-    ( MessageBatchRequest (..)
-    , MessageBatchRequests (..)
+    ( MessageBatchRequests (..)
     , MessageBatchResponse (..)
     , ListMessageBatchRequest (..)
     , ListMessageBatchResponse (..)
@@ -57,18 +56,4 @@ retrieveMessageBatchResults messageBatchID =
         "GET"
         ("/v1/messages/batches/" ++ messageBatchID ++ "/results")
         (Nothing :: Maybe MessageBatchRequests)
-
-
-testMessageBatchRequests :: MessageBatchRequests
-testMessageBatchRequests = MessageBatchRequests
-    { requests = 
-        [ MessageBatchRequest 
-            { customID = "test1"     
-            , params = defaultChatRequest "Hello World"
-            }
-        , MessageBatchRequest 
-            { customID = "test2"     
-            , params = defaultChatRequest "Hi Claude"
-            }
-        ]
-    }
+        
