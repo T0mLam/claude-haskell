@@ -1,4 +1,4 @@
-# claude-haskell
+#  claude-haskell λ
 
 This library provides Haskell functions to interact with Claude's API, including sending text and image messages, listing and retrieving model information. It includes utilities for building API requests and handling responses.
 
