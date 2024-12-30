@@ -4,8 +4,6 @@
 
 This library provides Haskell functions to interact with the Claude API, including sending text messages, images, pdf documents, listing and retrieving model information, and create message batches. It includes utilities and types for building API requests and handling responses.
 
----
-
 ## Table of Contents
 
 - [Installation](#installation)
@@ -102,7 +100,7 @@ Below is a guide to the key functionalities and corresponding functions.
 
 ### Send messages
 
-`chat` `defaultChatRequest` `defaultIOImageChatRequest` `ChatRequest`
+[`chat`](#chat) [`defaultChatRequest`](#defaultchatrequest)   [`defaultIOImageChatRequest`](#defaultioimagechatrequest) [`ChatRequest`](#chatrequest)
 
 ```haskell
 chat :: ChatRequest -> IO (Either String ChatResponse)
@@ -176,9 +174,11 @@ main = do
                     putStrLn $ "Bot: " ++ botReply
 ```
 
+</br>
+
 ### Use a pre-defined chatbot
 
-`chatBot`
+[`chatBot`](#chatbot)
 
 ```haskell
 chatBot :: IO ()
@@ -191,9 +191,11 @@ main :: IO ()
 main = chatBot
 ```
 
+</br>
+
 ### Count the number of tokens in a message
 
-`countToken` `defaultCountTokenRequest` `CountTokenRequest`
+[`countToken`](#counttoken) [`defaultCountTokenRequest`](#defaultcounttokenrequest) [`CountTokenRequest`](#counttokenrequest-and-counttokenresponse)
 
 ```haskell
 countToken :: CountTokenRequest -> IO (Either String CountTokenResponse)
@@ -227,9 +229,11 @@ main = do
 **Notes:**
 Create custom `CountTokenRequest` for counting tokens for media requests.
 
+</br>
+
 ### List all available models
 
-`listModels` `defaultModelRequest`
+[`listModels`](#listmodels) [`defaultModelRequest`](#defaultmodelrequest)
 
 ```haskell
 listModels :: ModelRequest -> IO (Either String ModelResponse)
@@ -239,17 +243,21 @@ listModels :: ModelRequest -> IO (Either String ModelResponse)
 defaultModelRequest :: ModelRequest
 ```
 
+</br>
+
 ### Get model details
 
-`getModel`
+[`getModel`](#getmodel)
 
 ```haskell
 getModel :: String -> IO (Either String ModelData)
 ```
 
+</br>
+
 ### Message batch operations
 
-`createMessageBatch` `retrieveMessageBatch` `listMessageBatch` `cancelMessageBatch` `retrieveMessageBatchResults`
+[`createMessageBatch`](#createmessagebatch) [`retrieveMessageBatch`](#retrievemessagebatch) [`listMessageBatch`](#listmessagebatch) [`cancelMessageBatch`](#cancelmessagebatch) [`retrieveMessageBatchResults`](#retrievemessagebatchresults)
 
 
 ```haskell
@@ -282,9 +290,11 @@ retrieveMessageBatchResults
     -> IO (Either String RetrieveMessageBatchResults)
 ```
 
+</br>
+
 ### Create custom requests to Anthropic's API
 
-`sendRequest`
+[`sendRequest`](#sendrequest)
 
 ```haskell
 sendRequest
