@@ -1,5 +1,8 @@
 #  claude-haskell 
 
+[![License: MIT](https://cdn.prod.website-files.com/5e0f1144930a8bc8aace526c/65dd9eb5aaca434fac4f1c34_License-MIT-blue.svg)](/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/T0mLam/claude-haskell.svg)](https://github.com/T0mLam/claude-haskell/releases/)
+
 **claude-haskell is an unofficial binding for Anthropic's Claude API. This project has not been reviewed or published as an official package.**
 
 This library provides Haskell functions to interact with the Claude API, including sending text messages, images, pdf documents, listing and retrieving model information, and create message batches. It includes utilities and types for building API requests and handling responses.
