@@ -18,6 +18,7 @@ This library provides Haskell functions to interact with the Claude API, includi
 - [Modules](#modules)
     - [**ClaudeAPI.Config**](#claudeapiconfig)
         - [baseUrl](#baseurl)
+        - [defaultModel](#defaultmodel)
     - [**ClaudeAPI.Chat**](#claudeapichat)
         - [defaultChatRequest](#defaultchatrequest)
         - [sendRequest](#sendrequest)
