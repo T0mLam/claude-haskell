@@ -74,22 +74,46 @@ This library provides Haskell functions to interact with the Claude API, includi
 
 ## Installation
 
-1. Clone the repository:
+1. Create a new file `cabal.project` in the root directory of your cabal project
    ```bash
-   git clone https://github.com/your-repo/claude-haskell.git
+   new-project
+   ├── CHANGELOG.md
+   ├── LICENSE
+   ├── app
+   │   └── Main.hs
+   ├── cabal.project
+   └── new-project.cabal
    ```
 
-2. Build the project:
+2. Add claude-haskell as a package in `cabal.project`:
    ```bash
-   cabal build
+   source-repository-package
+    type: git
+    location: https://github.com/T0mLam/claude-haskell.git
+
+   packages: ./<filename>.cabal
    ```
 
-3. Run the tests:
-   ```bash
-   cabal test
+3. Update the `.cabal` configurations
+   ```
+   -- Other library packages from which modules are imported.
+   build-depends:    base ^>=4.17.2.1,
+                     claude-haskell
    ```
 
-4. Set the API key and Anthropic version in the environment (`.env`) file:
+5. Set the API key and Anthropic version in the environment (`.env`) file:
+   ```bash
+   new-project
+   ├── CHANGELOG.md
+   ├── LICENSE
+   ├── app
+   │   └── Main.hs
+   ├── cabal.project
+   ├── .env # Create a new environment file 
+   └── new-project.cabal
+   ```
+   `.env`
+
    ```bash
    API_KEY=<api_key>
    ANTHROPIC_VERSION=<anthropic_version> # e.g. 2023-06-01
