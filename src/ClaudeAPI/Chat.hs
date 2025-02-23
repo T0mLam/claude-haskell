@@ -18,6 +18,7 @@ import ClaudeAPI.Config (baseUrl, defaultModel)
 import Configuration.Dotenv (loadFile, defaultConfig)  
 import Control.Exception (SomeException, try)
 import Data.Aeson (encode, ToJSON)
+import Control.Monad (when)
 import Data.Char (toLower)
 import Data.List (isPrefixOf)
 import Data.Text (Text)
@@ -56,7 +57,9 @@ sendRequest
     -> IO (Either String resp)
 sendRequest requestMethod endpoint chatReq = do
     -- Try to load the API key from the .env file
-    loadFile defaultConfig
+    envFileExists <- doesFileExist ".env"
+    when envFileExists $ loadFile defaultConfig
+
     getApiKey <- try (getEnv "API_KEY") :: IO (Either SomeException String)
     getAnthropicVersion <- try (getEnv "ANTHROPIC_VERSION") :: IO (Either SomeException String)
 
