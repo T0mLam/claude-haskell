@@ -1,7 +1,6 @@
 #  claude-haskell 
 
 [![License: MIT](https://cdn.prod.website-files.com/5e0f1144930a8bc8aace526c/65dd9eb5aaca434fac4f1c34_License-MIT-blue.svg)](/LICENSE)
-[![GitHub release](https://img.shields.io/github/release/T0mLam/claude-haskell.svg)](https://github.com/T0mLam/claude-haskell/releases/)
 ![example workflow](https://github.com/T0mLam/claude-haskell/actions/workflows/haskell.yml/badge.svg)
 
 **claude-haskell is an unofficial binding for Anthropic's Claude API. This project has not been reviewed or published as an official package.**
