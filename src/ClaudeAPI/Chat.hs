@@ -189,7 +189,7 @@ encodeMediaToBase64 mediaPath = do
                     return $ Right $ decodeUtf8 mediaBytesB64
 
 
-defaultIOMediaChatRequest :: String -> String -> IO (Either String ChatRequest)
+defaultIOMediaChatRequest :: FilePath -> String -> IO (Either String ChatRequest)
 defaultIOMediaChatRequest mediaPath message = do
     let mediaType' = getMediaType mediaPath
     let msgType' = if mediaType' == "application/pdf" then "document" else "image"
@@ -222,7 +222,7 @@ defaultIOMediaChatRequest mediaPath message = do
                 }
 
 
-addMediaToChatRequest :: String -> String -> ChatRequest -> IO (Either String ChatRequest)
+addMediaToChatRequest :: FilePath -> String -> ChatRequest -> IO (Either String ChatRequest)
 addMediaToChatRequest mediaPath message req = do
     imageRequest <- defaultIOMediaChatRequest mediaPath message
     case imageRequest of

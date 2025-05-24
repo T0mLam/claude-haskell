@@ -1,4 +1,4 @@
-#  claude-haskell 
+#  claude-haskell
 
 [![License: MIT](https://cdn.prod.website-files.com/5e0f1144930a8bc8aace526c/65dd9eb5aaca434fac4f1c34_License-MIT-blue.svg)](/LICENSE)
 ![example workflow](https://github.com/T0mLam/claude-haskell/actions/workflows/haskell.yml/badge.svg)
@@ -17,7 +17,7 @@ This library provides Haskell functions to interact with the Claude API, includi
     - [List all available models](#list-all-available-models)
     - [Get model details](#get-model-details)
     - [Message batch operations](#message-batch-operations)
-    - [Create custom requests to Anthropic's API](#create-custom-requests-to-anthropics-api)  
+    - [Create custom requests to Anthropic's API](#create-custom-requests-to-anthropics-api)
 - [Modules](#modules)
     - [**ClaudeAPI.Config**](#claudeapiconfig)
         - [baseUrl](#baseurl)
@@ -112,7 +112,7 @@ This library provides Haskell functions to interact with the Claude API, includi
    ├── app
    │   └── Main.hs
    ├── cabal.project
-   ├── .env # Create a new environment file 
+   ├── .env # Create a new environment file
    └── new-project.cabal
    ```
    `.env`
@@ -120,7 +120,7 @@ This library provides Haskell functions to interact with the Claude API, includi
    ```bash
    API_KEY=<api_key>
    ANTHROPIC_VERSION=<anthropic_version> # e.g. 2023-06-01
-   ``` 
+   ```
 
 ## Usage
 
@@ -128,7 +128,7 @@ Below is a guide to the key functionalities and corresponding functions.
 
 ### Send messages
 
-[`chat`](#chat) [`defaultChatRequest`](#defaultchatrequest)   [`defaultIOImageChatRequest`](#defaultioimagechatrequest) [`ChatRequest`](#chatrequest)
+[`chat`](#chat) [`defaultChatRequest`](#defaultchatrequest)   [`defaultIOMediaChatRequest`](#defaultiomediachatrequest) [`ChatRequest`](#chatrequest)
 
 ```haskell
 chat :: ChatRequest -> IO (Either String ChatResponse)
@@ -141,8 +141,8 @@ defaultChatRequest
 ```
 
 ```haskell
-defaultIOMediaChatRequest 
-    :: String -- File path (i.e. local, URL)
+defaultIOMediaChatRequest
+    :: FilePath -- File path (i.e. local, URL)
     -> String -- Instructions
     -> IO (Either String ChatRequest)
 ```
@@ -185,7 +185,7 @@ main = do
     let imagePath = "https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg"
     let instructions = "What is in this image?"
 
-    -- Encode the image into base64 format 
+    -- Encode the image into base64 format
     result <- defaultIOImageChatRequest imagePath instructions
 
     case result of
@@ -289,31 +289,31 @@ getModel :: String -> IO (Either String ModelData)
 
 
 ```haskell
-createMessageBatch 
-    :: MessageBatchRequests 
+createMessageBatch
+    :: MessageBatchRequests
     -> IO (Either String MessageBatchResponse)
 ```
 
 ```haskell
-retrieveMessageBatch 
+retrieveMessageBatch
     :: String -- Message batch ID, e.g. msg_...
     -> IO (Either String MessageBatchResponse)
 ```
 
 ```haskell
-listMessageBatch 
-    :: ListMessageBatchRequest 
+listMessageBatch
+    :: ListMessageBatchRequest
     -> IO (Either String ListMessageBatchResponse)
 ```
 
 ```haskell
-cancelMessageBatch 
+cancelMessageBatch
     :: String -- Message batch ID, e.g. msg_...
     -> IO (Either String MessageBatchResponse)
 ```
 
 ```haskell
-retrieveMessageBatchResults 
+retrieveMessageBatchResults
     :: String -- Message batch ID, e.g. msg_...
     -> IO (Either String RetrieveMessageBatchResults)
 ```
@@ -326,23 +326,23 @@ retrieveMessageBatchResults
 
 ```haskell
 sendRequest
-    :: (ToJSON req, JSONResponse resp) 
+    :: (ToJSON req, JSONResponse resp)
     => String -- request method
     -> String -- endpoint
-    -> Maybe req 
+    -> Maybe req
     -> IO (Either String resp)
 ```
 
 **Example:**
 
 ```haskell
-data ExampleReq = ExampleReq {...} 
+data ExampleReq = ExampleReq {...}
     deriving (Show, Generic, ToJson)
 
 -- JSONResponse is a subclass of FromJSON,
--- which determines how the content is decoded 
--- to the data object (default=Data.Aeson.eitherDecode) 
-data ExampleResp = ExampleResp {...} 
+-- which determines how the content is decoded
+-- to the data object (default=Data.Aeson.eitherDecode)
+data ExampleResp = ExampleResp {...}
     deriving (Show, Generic, JSONResponse)
 
 exampleFunc :: ExampleReq -> IO (Either String ExampleResp)
@@ -532,7 +532,7 @@ Creates a default `ChatRequest` for media files (e.g., images or documents).
 
 **Type:**
 ```haskell
-defaultIOMediaChatRequest :: String -> String -> IO (Either String ChatRequest)
+defaultIOMediaChatRequest :: FilePath -> String -> IO (Either String ChatRequest)
 ```
 
 **Parameters:**
@@ -1130,7 +1130,7 @@ This module provides utility functions and type classes for handling query param
 Defines a type class for types that can provide query parameters for HTTP requests.
 
 ```haskell
-class HasQueryParams a where 
+class HasQueryParams a where
     getBeforeID :: a -> Maybe String
     -- ^ Retrieves the `before_id` query parameter, if present.
 
@@ -1204,4 +1204,4 @@ Contributions are welcome! Please follow these steps:
 
 ## License
 
-This library is licensed under the MIT License. 
+This library is licensed under the MIT License.
