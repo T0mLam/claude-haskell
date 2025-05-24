@@ -1,11 +1,11 @@
 {-# LANGUAGE DuplicateRecordFields #-}
 
 module ClaudeAPI
-( -- Configurations
+( -- ** Configurations
   baseUrl
 , defaultModel
 
-  -- Send messages to Claude
+  -- ** Send messages to Claude
 , defaultChatRequest
 , defaultCountTokenRequest
 , defaultIOMediaChatRequest
@@ -19,19 +19,19 @@ module ClaudeAPI
 , encodeMediaToBase64
 , addMediaToChatRequest
 
-  -- Send message batches to Claude
+  -- ** Send message batches to Claude
 , createMessageBatch
 , retrieveMessageBatch
 , listMessageBatch
 , cancelMessageBatch
 , retrieveMessageBatchResults
 
-  -- Get model info
+  -- ** Get model info
 , listModels
 , getModel
 , defaultModelRequest
 
-  -- Types
+  -- ** Types
 , MediaSource (..)
 , RequestMessageContent (..)
 , RequestMessage (..)
@@ -52,7 +52,7 @@ module ClaudeAPI
 , MessageBatchResult (..)
 , RetrieveMessageBatchResult (..)
 
-  -- Utility functions for building data types
+  -- ** Utility functions for building data types
 , camelToUnderscore
 , buildQueryString
 )
