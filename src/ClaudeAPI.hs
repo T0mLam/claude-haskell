@@ -1,4 +1,6 @@
-module ClaudeAPI 
+{-# LANGUAGE DuplicateRecordFields #-}
+
+module ClaudeAPI
 ( -- Configurations
   baseUrl
 , defaultModel
@@ -29,7 +31,7 @@ module ClaudeAPI
 , getModel
 , defaultModelRequest
 
-  -- Types 
+  -- Types
 , MediaSource (..)
 , RequestMessageContent (..)
 , RequestMessage (..)
@@ -52,8 +54,8 @@ module ClaudeAPI
 
   -- Utility functions for building data types
 , camelToUnderscore
-, buildQueryString   
-) 
+, buildQueryString
+)
 where
 
 import ClaudeAPI.Config (baseUrl, defaultModel)
@@ -76,8 +78,8 @@ import ClaudeAPI.MessageBatches
     , createMessageBatch
     , listMessageBatch
     , retrieveMessageBatch
-    , retrieveMessageBatchResults 
-    ) 
+    , retrieveMessageBatchResults
+    )
 import ClaudeAPI.Models (listModels, getModel, defaultModelRequest)
 import ClaudeAPI.Types
     ( MediaSource (..)
@@ -99,8 +101,8 @@ import ClaudeAPI.Types
     , ListMessageBatchResponse (..)
     , MessageBatchResult (..)
     , RetrieveMessageBatchResult (..)
-    ) 
-import ClaudeAPI.Utils 
+    )
+import ClaudeAPI.Utils
     ( camelToUnderscore
-    , buildQueryString   
+    , buildQueryString
     )
