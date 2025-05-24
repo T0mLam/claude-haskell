@@ -51,8 +51,8 @@ defaultChatRequest reqContent = ChatRequest
 -- | Send any request to the Claude API
 sendRequest
     :: (ToJSON req, JSONResponse resp)
-    => String -- ^ request method, like "POST" or "GET"
-    -> String -- ^ endpoint, like "/v1/messages"
+    => String -- ^ request method, like \"POST\" or \"GET\"
+    -> String -- ^ endpoint, like \"\/v1\/messages\"
     -> Maybe req
     -> IO (Either String resp)
 sendRequest requestMethod endpoint chatReq = do
