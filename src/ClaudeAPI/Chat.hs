@@ -114,7 +114,11 @@ chat :: ChatRequest -> IO (Either String ChatResponse)
 chat req = sendRequest "POST" "/v1/messages" (Just req)
 
 
-addMessageToChatRequest :: String -> String -> ChatRequest -> ChatRequest
+addMessageToChatRequest
+    :: String -- ^ role, like "user" or "assistant"
+    -> String -- ^ message content
+    -> ChatRequest
+    -> ChatRequest
 addMessageToChatRequest r m req =
     req { messages = messages req ++ [RequestMessage { role = r, content = Left m }] }
 
