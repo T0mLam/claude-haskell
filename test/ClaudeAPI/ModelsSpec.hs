@@ -25,4 +25,4 @@ spec = do
                 Right (ModelData modelType' modelID' displayName' _) -> do
                     modelType' `shouldBe` "model"
                     modelID' `shouldBe` defaultModel 
-                    displayName' `shouldBe` "Claude 3.5 Sonnet (New)"
+                    displayName' `shouldBe` "Claude Sonnet 3.5 (New)"
