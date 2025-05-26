@@ -15,7 +15,7 @@ import ClaudeAPI.Types
     )
 import ClaudeAPI.Config (baseUrl, defaultModel)
 
-import Configuration.Dotenv (loadFile, defaultConfig)  
+import Configuration.Dotenv (loadFile, defaultConfig)
 import Control.Exception (SomeException, try)
 import Data.Aeson (encode, ToJSON)
 import Control.Monad (when)
@@ -23,7 +23,7 @@ import Data.Char (toLower)
 import Data.List (isPrefixOf)
 import Data.Text (Text)
 import Data.Text.Encoding (decodeUtf8)
-import Network.HTTP.Client 
+import Network.HTTP.Client
 import Network.HTTP.Client.TLS (tlsManagerSettings)
 import Network.HTTP.Types.Status (statusCode, Status (statusMessage))
 import System.Environment (getEnv)
@@ -37,7 +37,7 @@ import qualified Data.CaseInsensitive as CI
 
 
 defaultChatRequest :: String -> ChatRequest
-defaultChatRequest reqContent = ChatRequest 
+defaultChatRequest reqContent = ChatRequest
     { model = defaultModel
     , messages = [RequestMessage { role = "user", content = Left reqContent }]
     , maxTokens = 1024
@@ -48,12 +48,12 @@ defaultChatRequest reqContent = ChatRequest
     }
 
 
--- Send any request to the Claude API
+-- | Send any request to the Claude API
 sendRequest
-    :: (ToJSON req, JSONResponse resp) 
-    => String -- request method
-    -> String -- endpoint
-    -> Maybe req 
+    :: (ToJSON req, JSONResponse resp)
+    => String -- ^ request method, like \"POST\" or \"GET\"
+    -> String -- ^ endpoint, like \"\/v1\/messages\"
+    -> Maybe req
     -> IO (Either String resp)
 sendRequest requestMethod endpoint chatReq = do
     -- Try to load the API key from the .env file
@@ -63,7 +63,7 @@ sendRequest requestMethod endpoint chatReq = do
     getApiKey <- try (getEnv "API_KEY") :: IO (Either SomeException String)
     getAnthropicVersion <- try (getEnv "ANTHROPIC_VERSION") :: IO (Either SomeException String)
 
-    case (getApiKey, getAnthropicVersion) of 
+    case (getApiKey, getAnthropicVersion) of
         (Left _, _) -> return $ Left "error: API key not found"
         (_, Left _) -> return $ Left "error: Anthropic version not found"
         (Right apiKey, Right anthropicVersion) -> do
@@ -76,7 +76,7 @@ sendRequest requestMethod endpoint chatReq = do
             -- Encode the request as JSON
             let claudeRequestBody = maybe mempty (RequestBodyLBS . encode) chatReq
 
-            -- Create the request object 
+            -- Create the request object
             let request = initialRequest
                     { requestHeaders = fmap (\(k, v) -> (CI.mk $ BS.pack k, BS.pack v))
                         [ ("Content-Type", "application/json")
@@ -98,51 +98,55 @@ sendRequest requestMethod endpoint chatReq = do
                     -- Decode the json or jsonl response into data object
                     Right responseBodyObject -> return $ Right responseBodyObject
                     Left err -> return $ Left $ "error: failed to decode response body" ++ err
-                    
-                code -> do 
+
+                code -> do
                     -- Decode the error response body into a string
                     let errorDetails = BL.unpack responseBody'
                     let responseStatusMessage' = statusMessage responseStatus'
-                    return $ 
-                        Left $ 
-                            "error " ++ show code ++ ": " 
-                            ++ BS.unpack responseStatusMessage' 
+                    return $
+                        Left $
+                            "error " ++ show code ++ ": "
+                            ++ BS.unpack responseStatusMessage'
                             ++ ". " ++ errorDetails
 
 
 chat :: ChatRequest -> IO (Either String ChatResponse)
 chat req = sendRequest "POST" "/v1/messages" (Just req)
- 
 
-addMessageToChatRequest :: String -> String -> ChatRequest -> ChatRequest
-addMessageToChatRequest r m req = 
+
+addMessageToChatRequest
+    :: String -- ^ role, like "user" or "assistant"
+    -> String -- ^ message content
+    -> ChatRequest
+    -> ChatRequest
+addMessageToChatRequest r m req =
     req { messages = messages req ++ [RequestMessage { role = r, content = Left m }] }
 
 
 addResponseToChatRequest :: ChatRequest -> ChatResponse -> ChatRequest
-addResponseToChatRequest req resp = 
-    let 
+addResponseToChatRequest req resp =
+    let
         respRole = responseRole resp
         respContent = responseText $ head $ responseContent resp
-    in 
+    in
         addMessageToChatRequest respRole respContent req
 
-    
+
 defaultCountTokenRequest :: String -> CountTokenRequest
-defaultCountTokenRequest reqContent = CountTokenRequest 
+defaultCountTokenRequest reqContent = CountTokenRequest
     { model = defaultModel
     , requestMessages = [RequestMessage { role = "user", content = Left reqContent }]
     , system = Nothing
     }
 
-    
+
 countToken :: CountTokenRequest -> IO (Either String CountTokenResponse)
 countToken req = sendRequest "POST" "/v1/messages/count_tokens" (Just req)
 
 
 getMediaType :: FilePath -> String
 getMediaType mediaPath =
-    case map toLower (takeExtension mediaPath) of 
+    case map toLower (takeExtension mediaPath) of
         ".pdf" ->  "application/pdf"
         ".jpg" -> "image/jpeg"
         other -> "image/" ++ drop 1 other
@@ -151,7 +155,7 @@ getMediaType mediaPath =
 encodeMediaToBase64 :: String -> IO (Either String Text)
 encodeMediaToBase64 mediaPath = do
     if  "https://" `isPrefixOf` mediaPath
-        then do 
+        then do
             -- Fetch online media
             -- Create a new HTTP manager
             manager <- newManager tlsManagerSettings
@@ -169,8 +173,8 @@ encodeMediaToBase64 mediaPath = do
                     let mediaBytes = responseBody response
                     let mediaBytesB64 = B64.encode (BL.toStrict mediaBytes)
                     return $ Right $ decodeUtf8 mediaBytesB64
-                            
-                code -> do 
+
+                code -> do
                     -- Decode the error response body into a string
                     let errorDetails = BL.unpack responseBody'
                     let responseStatusMessage' = statusMessage responseStatus'
@@ -184,30 +188,30 @@ encodeMediaToBase64 mediaPath = do
                 then return $ Left "error: File does not exist."
                 else do
                     -- Encode the media into base64 format
-                    mediaBytes <- BS.readFile mediaPath 
+                    mediaBytes <- BS.readFile mediaPath
                     let mediaBytesB64 = B64.encode mediaBytes
                     return $ Right $ decodeUtf8 mediaBytesB64
-        
 
-defaultIOMediaChatRequest :: String -> String -> IO (Either String ChatRequest)
+
+defaultIOMediaChatRequest :: FilePath -> String -> IO (Either String ChatRequest)
 defaultIOMediaChatRequest mediaPath message = do
     let mediaType' = getMediaType mediaPath
     let msgType' = if mediaType' == "application/pdf" then "document" else "image"
     encodedMediaResult <- encodeMediaToBase64 mediaPath
-    case encodedMediaResult of 
+    case encodedMediaResult of
         Left err -> return $ Left err
         Right encodedMedia -> do
-            let mediaSource = MediaSource 
+            let mediaSource = MediaSource
                     { encodingType = "base64"
                     , mediaType = mediaType'
                     , imageData = encodedMedia
                     }
-            return $ Right ChatRequest 
+            return $ Right ChatRequest
                 { model = defaultModel
-                , messages = 
+                , messages =
                     [ RequestMessage
                         { role = "user"
-                        , content = 
+                        , content =
                             Right
                                 [ MediaContent { msgType = msgType', source = mediaSource }
                                 , TextContent { msgType = "text", text = message }
@@ -222,7 +226,7 @@ defaultIOMediaChatRequest mediaPath message = do
                 }
 
 
-addMediaToChatRequest :: String -> String -> ChatRequest -> IO (Either String ChatRequest)
+addMediaToChatRequest :: FilePath -> String -> ChatRequest -> IO (Either String ChatRequest)
 addMediaToChatRequest mediaPath message req = do
     imageRequest <- defaultIOMediaChatRequest mediaPath message
     case imageRequest of
@@ -236,32 +240,32 @@ chatBot = do
     let req = defaultChatRequest "Hi Claude."
     chatHelper req
 
-    where 
+    where
         chatHelper :: ChatRequest -> IO ()
         chatHelper chatReq = do
             -- Send the initial request to Claude
             resp <- chat chatReq
 
-            case resp of 
+            case resp of
                 Left err -> putStrLn err
                 Right chatResp -> do
                     -- Add Claude's response into the new request
                     let respContent =
                             responseText $ head $ responseContent chatResp
 
-                    let updatedChatReq = 
+                    let updatedChatReq =
                             addResponseToChatRequest chatReq chatResp
 
                     putStrLn $ "Claude:\n-------\n" ++ respContent ++ "\n"
 
-                    putStrLn "You:\n----"  
+                    putStrLn "You:\n----"
                     userReply <- getLine
                     putStrLn ""
 
-                    case userReply of 
+                    case userReply of
                         "CLEAR" -> do
                             -- Empty chat history
-                            putStrLn "You:\n----"  
+                            putStrLn "You:\n----"
                             newMessage <- getLine
                             putStrLn ""
                             chatHelper $ defaultChatRequest newMessage
@@ -270,7 +274,7 @@ chatBot = do
                                 then do
                                     -- New media message
                                     -- Get the instructions for the media request.
-                                    putStr "Instructions: "  
+                                    putStr "Instructions: "
                                     instructions <- getLine
                                     putStrLn ""
 
@@ -281,9 +285,9 @@ chatBot = do
                                     case mediaRequest of
                                         Left err -> putStrLn err
                                         Right newChatReq -> chatHelper newChatReq
-                                else do 
+                                else do
                                     -- New text message
-                                    let newChatReq = 
+                                    let newChatReq =
                                             addMessageToChatRequest "user" userReply updatedChatReq
                                     chatHelper newChatReq
 

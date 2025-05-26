@@ -1,9 +1,11 @@
-module ClaudeAPI 
-( -- Configurations
+{-# LANGUAGE DuplicateRecordFields #-}
+
+module ClaudeAPI
+( -- ** Configurations
   baseUrl
 , defaultModel
 
-  -- Send messages to Claude
+  -- ** Send messages to Claude
 , defaultChatRequest
 , defaultCountTokenRequest
 , defaultIOMediaChatRequest
@@ -17,19 +19,19 @@ module ClaudeAPI
 , encodeMediaToBase64
 , addMediaToChatRequest
 
-  -- Send message batches to Claude
+  -- ** Send message batches to Claude
 , createMessageBatch
 , retrieveMessageBatch
 , listMessageBatch
 , cancelMessageBatch
 , retrieveMessageBatchResults
 
-  -- Get model info
+  -- ** Get model info
 , listModels
 , getModel
 , defaultModelRequest
 
-  -- Types 
+  -- ** Types
 , MediaSource (..)
 , RequestMessageContent (..)
 , RequestMessage (..)
@@ -50,10 +52,10 @@ module ClaudeAPI
 , MessageBatchResult (..)
 , RetrieveMessageBatchResult (..)
 
-  -- Utility functions for building data types
+  -- ** Utility functions for building data types
 , camelToUnderscore
-, buildQueryString   
-) 
+, buildQueryString
+)
 where
 
 import ClaudeAPI.Config (baseUrl, defaultModel)
@@ -76,8 +78,8 @@ import ClaudeAPI.MessageBatches
     , createMessageBatch
     , listMessageBatch
     , retrieveMessageBatch
-    , retrieveMessageBatchResults 
-    ) 
+    , retrieveMessageBatchResults
+    )
 import ClaudeAPI.Models (listModels, getModel, defaultModelRequest)
 import ClaudeAPI.Types
     ( MediaSource (..)
@@ -99,8 +101,8 @@ import ClaudeAPI.Types
     , ListMessageBatchResponse (..)
     , MessageBatchResult (..)
     , RetrieveMessageBatchResult (..)
-    ) 
-import ClaudeAPI.Utils 
+    )
+import ClaudeAPI.Utils
     ( camelToUnderscore
-    , buildQueryString   
+    , buildQueryString
     )
