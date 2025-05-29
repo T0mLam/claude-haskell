@@ -219,6 +219,33 @@ main :: IO ()
 main = chatBot
 ```
 
+```
+ghci> chatBot
+Enter your first message (or type 'QUIT' to exit)
+
+Claude:
+-------
+Hi! I'm happy to chat with you. How can I help?
+
+You:
+----
+Where is the capital of China?
+
+Claude:
+-------
+The capital of China is Beijing (formerly known as Peking). It has been China's capital city since 1949 when the People's Republic of China was established. Beijing is located in the northern part of the country and is one of China's four direct-administered municipalities.
+
+You:
+----
+MEDIA: https://thumbs.dreamstime.com/b/red-apple-isolated-clipping-path-19130134.jpg
+
+Instructions: What is in the image?
+
+Claude:
+-------
+This image shows a fresh, bright red apple with a green leaf still attached to its stem. The apple appears to be a Red Delicious variety, given its deep red color and characteristic shape. The apple looks perfectly ripe and has a glossy, smooth skin with tiny light spots typical of this fruit. The image is shot against a pure white background, making the apple stand out clearly. The leaf appears fresh and vibrant green, showing the apple is recently picked or very fresh.
+```
+
 </br>
 
 ### Count the number of tokens in a message

@@ -279,7 +279,7 @@ chatBot = do
                                     putStrLn ""
 
                                     -- Try loading the media into the request
-                                    let mediaPath = drop 6 userReply
+                                    let mediaPath = drop 7 userReply
                                     mediaRequest <- addMediaToChatRequest mediaPath instructions updatedChatReq
 
                                     case mediaRequest of
@@ -292,4 +292,4 @@ chatBot = do
                                     chatHelper newChatReq
 
         isMediaRequest :: String -> Bool
-        isMediaRequest input = "MEDIA:" `isPrefixOf` input
+        isMediaRequest input = "MEDIA: " `isPrefixOf` input
